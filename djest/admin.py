@@ -7,18 +7,6 @@ class AdminCase(BaseCase):
     def wout(self):
         with open('/tmp/out.html', 'w') as f:
             f.write(self.response.rendered_content)
-    
-    def post_form(self, url, data):
-        self.response = self.client.post(
-            url,
-            data,
-            follow = True
-        )
-        
-        if 'errorlist' in self.response.context.keys():
-            self.wout()
-            raise Exception('Form did not validate?')
-        return self.response
 
     def assert_result_count(self, n):
         try:

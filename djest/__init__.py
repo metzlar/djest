@@ -20,6 +20,22 @@ class BaseCase(TestCase, dict):
         m.save()
         self[name] = m
         return m
+
+    def post(self, url, data):
+        self.response = self.client.post(
+            url,
+            data,
+            follow = True
+        )
+        
+        if 'errorlist' in self.response.context.keys():
+            self.wout()
+            raise Exception('Form did not validate?')
+        return self.response
+
+    def get(self, url):
+        self.response = self.client.get(url)
+        return self.response
     
     def uuid4(self):
         return uuid4().hex
