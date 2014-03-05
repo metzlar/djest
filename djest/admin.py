@@ -4,10 +4,6 @@ from django.contrib.auth.models import User
 
 
 class AdminCase(BaseCase):
-    def wout(self):
-        with open('/tmp/out.html', 'w') as f:
-            f.write(self.response.rendered_content)
-
     def assert_result_count(self, n):
         try:
             self.assertEqual(

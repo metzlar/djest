@@ -18,9 +18,9 @@ class MyCase(AdminCase):
         self.user
       ) = self.create_user(is_staff = True)
 
-      self.new('example', MyModel, {
-        'name': 'Example'
-      })
+      self.new('example', MyModel, { # this is short for:
+        'name': 'Example'            # self['example'] = MyModel(..)
+      })                             # self['example'].save()
 
     def test_example(self):
     

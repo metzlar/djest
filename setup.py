@@ -8,6 +8,7 @@ setup(name='Djest',
       cmdclass={'upload':lambda x:None},
       install_requires=[
           'django',
+          'beautifulsoup4'
       ],
       dependency_links=REQUIREMENTS,
       
