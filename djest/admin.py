@@ -1,6 +1,7 @@
 from djest import BaseCase
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+from django.core.urlresolvers import reverse
 
 
 class AdminCase(BaseCase):
@@ -30,7 +31,18 @@ class AdminCase(BaseCase):
             password = user_pass
         )
         return self.response
-    
+
+    def logout(self):
+        self.response = self.client.logout()
+        return self.response
+
+    def reverse(self, name):
+        return reverse('admin:%s' % name)
+        
+    def get_or_create_group(self, name):
+        group, created = Group.objects.get_or_create(name=name)
+        return group
+        
     def create_user(self, groups=None, do_login=False, **kwargs):
         user_name = self.uuid4()
         user_pass = self.uuid4()

@@ -69,6 +69,12 @@ class BaseCase(TestCase, dict):
         if 'errorlist' in self.response.context.keys():
             self.wout()
             raise Exception('Form did not validate?')
+
+        if 'form' in self.response.context:
+            if self.response.context['form']._errors:
+                self.wout()
+                raise Exception('Form did not validate?')
+
         return self.response
 
     def get(self, url):
@@ -77,3 +83,15 @@ class BaseCase(TestCase, dict):
     
     def uuid4(self):
         return uuid4().hex
+
+    def assert_in_title(self, test):
+        soup_title = BeautifulSoup(
+            self.response.rendered_content
+        ).title.get_text().lower()
+        test = test.lower()
+        if not test in soup_title:
+            raise AssertionError('%s is not in %s' % (
+                test,
+                soup_title
+            ))
+        self.assertTrue(True)
