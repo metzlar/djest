@@ -1,7 +1,6 @@
 from djest import BaseCase
 
 from django.contrib.auth.models import User, Group
-from django.core.urlresolvers import reverse
 
 
 class AdminCase(BaseCase):
@@ -36,8 +35,13 @@ class AdminCase(BaseCase):
         self.response = self.client.logout()
         return self.response
 
-    def reverse(self, name):
-        return reverse('admin:%s' % name)
+    def reverse(self, name, *args, **kwargs):
+        if not ':' in name:
+            name = 'admin:%s' % name
+        elif name[0] == ':':
+            name = name[1:]
+        return super(AdminCase, self).reverse(
+            name, *args, **kwargs)
         
     def get_or_create_group(self, name):
         group, created = Group.objects.get_or_create(name=name)

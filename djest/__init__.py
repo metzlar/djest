@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.core.urlresolvers import reverse_lazy
 from django.conf import settings
 
 from uuid import uuid4
@@ -10,6 +11,10 @@ class BaseCase(TestCase, dict):
     def __init__(self, *args, **kwargs):
         super(BaseCase, self).__init__(*args, **kwargs)
 
+
+    def reverse(self, *args, **kwargs):
+        return reverse_lazy(*args, **kwargs)
+        
     def wout(self):
         '''
         Write out the current response's rendered_content
@@ -65,15 +70,19 @@ class BaseCase(TestCase, dict):
             data,
             follow = True
         )
-        
-        if 'errorlist' in self.response.context.keys():
-            self.wout()
-            raise Exception('Form did not validate?')
 
-        if 'form' in self.response.context:
-            if self.response.context['form']._errors:
+        if hasattr(
+            self.response, 'context'
+        ) and self.response.context:
+        
+            if 'errorlist' in self.response.context.keys():
                 self.wout()
                 raise Exception('Form did not validate?')
+
+            if 'form' in self.response.context:
+                if self.response.context['form']._errors:
+                    self.wout()
+                    raise Exception('Form did not validate?')
 
         return self.response
 
