@@ -1,9 +1,12 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse_lazy
 from django.conf import settings
+from django.core import mail
+from django.http.response import HttpResponseRedirect
 
 from uuid import uuid4
 from bs4 import BeautifulSoup
+import json
 
 
 class BaseCase(TestCase, dict):
@@ -11,9 +14,33 @@ class BaseCase(TestCase, dict):
     def __init__(self, *args, **kwargs):
         super(BaseCase, self).__init__(*args, **kwargs)
 
-
+    def assert_redirect_to(self, part):
+        self.assertTrue(
+            isinstance(self.response, HttpResponseRedirect)
+        )
+        self.assertTrue(
+            part in self.response.url
+        )
+        
+    def assert_mail_count(self, n):
+        self.assertEqual(len(mail.outbox), n)
+        
     def reverse(self, *args, **kwargs):
         return reverse_lazy(*args, **kwargs)
+
+    def content(self):
+        content = None
+        if hasattr(self.response, 'rendered_content'):
+            content = self.response.rendered_content
+        elif hasattr(self.response, 'content'):
+            content = self.response.content
+        return content
+        
+    def json(self):
+        try:
+            return json.loads(self.content())
+        except:
+            return None
         
     def wout(self):
         '''
@@ -21,9 +48,12 @@ class BaseCase(TestCase, dict):
         to a file in /tmp/out.html TODO: Use temporary
         builtin python module.
         '''
-        self.debug(self.response.rendered_content)
-        with open('/tmp/out.html', 'w') as f:
-            f.write(self.response.rendered_content)
+        content = self.content()
+        
+        self.debug(content)
+        if content:
+            with open('/tmp/out.html', 'w') as f:
+                f.write(content)
 
     def debug(self, message):
         '''
