@@ -53,7 +53,7 @@ class BaseCase(TestCase, dict):
         self.debug(content)
         if content:
             with open('/tmp/out.html', 'w') as f:
-                f.write(content)
+                f.write(content.encode('utf8'))
 
     def debug(self, message):
         '''
