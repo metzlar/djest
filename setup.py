@@ -4,7 +4,7 @@ REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()] # pragm
 
 setup(name='Djest',
       version='0.1',
-      py_modules=['djest'],
+      packages=['djest'],
       cmdclass={'upload':lambda x:None},
       install_requires=[
           'django',
